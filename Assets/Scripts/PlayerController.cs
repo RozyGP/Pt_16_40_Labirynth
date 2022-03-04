@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float speed = 12f;
     CharacterController characterController;
+    public Transform groundCheck;
+    public LayerMask groundMask;
 
     void Start()
     {
@@ -26,5 +28,27 @@ public class PlayerController : MonoBehaviour
         //Vector3 move = Vector3.right * x + Vector3.forward * z; //bez obrotu
         Vector3 move = transform.right * x + transform.forward * z; //z obrotem
         characterController.Move(move * speed * Time.deltaTime);
+
+        RaycastHit hit;
+        if(Physics.Raycast(groundCheck.position,
+            transform.TransformDirection(Vector3.down),
+            out hit,
+            0.4f,
+            groundMask))
+        {
+            string terrainType = hit.collider.gameObject.tag;
+            switch(terrainType)
+            {
+                case "Slow":
+                    speed = 3f;
+                    break;
+                case "Fast":
+                    speed = 20f;
+                    break;
+                default:
+                    speed = 12f;
+                    break;
+            }
+        }
     }
 }
